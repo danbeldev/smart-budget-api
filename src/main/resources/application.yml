@@ -24,3 +24,4 @@ jwt:
     refresh: ${JWT_REFRESH_SECRET}
 base:
   page_size: 20
+  currency_code_id: 1

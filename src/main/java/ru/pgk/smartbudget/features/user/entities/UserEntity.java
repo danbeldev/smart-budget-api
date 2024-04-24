@@ -2,6 +2,8 @@ package ru.pgk.smartbudget.features.user.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ru.pgk.smartbudget.features.budget.entities.BudgetEntity;
+import ru.pgk.smartbudget.features.goal.entities.GoalEntity;
 import ru.pgk.smartbudget.features.transaction.entitites.TransactionEntity;
 
 import java.util.Collection;
@@ -19,4 +21,10 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Collection<TransactionEntity> transactions;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Collection<BudgetEntity> budgets;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Collection<GoalEntity> goals;
 }
