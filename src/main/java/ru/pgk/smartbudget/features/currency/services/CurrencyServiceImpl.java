@@ -11,6 +11,7 @@ import ru.pgk.smartbudget.features.currency.entities.CurrencyEntity;
 import ru.pgk.smartbudget.features.currency.services.cbr.CurrencyCbrService;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -45,10 +46,10 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public Double getCourseByCode(String code) {
-        for(CurrencyCbrValue value : currencyCbrService.getAll()) {
-            if(value.charCode().equals(code))
-                return value.value();
-        }
-        throw new ResourceNotFoundException("Currency course not found");
+        Map<String, CurrencyCbrValue> map = currencyCbrService.getAll();
+        if(map.containsKey(code))
+            return map.get(code).getValue();
+        else
+            throw new ResourceNotFoundException("Currency course not found");
     }
 }

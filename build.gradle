@@ -47,6 +47,13 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.11.0'
     implementation 'com.squareup.retrofit2:converter-jackson:2.11.0'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.0'
+
+    //Security
+    def jjwt_version = '0.11.5'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation "io.jsonwebtoken:jjwt-api:${jjwt_version}"
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwt_version}"
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jjwt_version}"
 }
 
 tasks.named('test') {

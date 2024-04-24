@@ -1,4 +1,4 @@
-package ru.pgk.smartbudget.confs;
+package ru.pgk.smartbudget.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +12,7 @@ public class RetrofitConf {
     @Bean
     public Retrofit retrofitCbr() {
         return new Retrofit.Builder()
-                .baseUrl("https://www.cbr.ru")
+                .baseUrl("https://www.cbr-xml-daily.ru")
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
     }

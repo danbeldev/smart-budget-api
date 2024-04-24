@@ -46,6 +46,7 @@ public class TransactionServiceImpl implements TransactionService {
             amountInBaseCurrency = amountInCurrency * currencyService.getCourseByCode(currencyCode.getCode());
         }else {
             amountInBaseCurrency = params.getAmount();
+
         }
         TransactionEntity transaction = new TransactionEntity();
         transaction.setCategory(category);
@@ -55,6 +56,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setAmountInBaseCurrency(amountInBaseCurrency);
         transaction.setDate(params.getDate());
         transaction.setDescription(params.getDescription());
+        transaction.setBaseCurrencyCode(defaultCurrency);
         return transactionRepository.save(transaction);
     }
 }
