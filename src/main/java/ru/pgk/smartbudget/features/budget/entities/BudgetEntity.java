@@ -3,6 +3,7 @@ package ru.pgk.smartbudget.features.budget.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import ru.pgk.smartbudget.features.expenseCategory.entitites.ExpenseCategoryEntity;
+import ru.pgk.smartbudget.features.transaction.entitites.TransactionEntity;
 import ru.pgk.smartbudget.features.user.entities.UserEntity;
 
 import java.time.LocalDate;
@@ -24,4 +25,16 @@ public class BudgetEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private ExpenseCategoryEntity category;
+
+    public Double getCurrentAmount() {
+        Double amount = 0.0;
+        for(TransactionEntity transaction : user.getTransactions()) {
+            if(transaction.getCategory().getId().equals(category.getId()) && transaction.getDate().isAfter(startDate)
+                            && transaction.getDate().isBefore(endDate)
+            ) {
+                amount += transaction.getAmountInBaseCurrency();
+            }
+        }
+        return amount;
+    }
 }
