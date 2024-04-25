@@ -8,4 +8,6 @@ public interface TransactionService {
     Page<TransactionEntity> getAllByUserId(Long userId, Integer offset, Integer limit);
 
     TransactionEntity create(Long userId, CreateTransactionParams params);
+
+    void deleteById(Long id);
 }

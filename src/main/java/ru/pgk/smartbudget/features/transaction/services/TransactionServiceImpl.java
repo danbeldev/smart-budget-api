@@ -40,14 +40,15 @@ public class TransactionServiceImpl implements TransactionService {
         CurrencyEntity currencyCode = null;
         Double amountInCurrency = null;
         Double amountInBaseCurrency;
+
         if(params.getCurrencyCodeId() != null && !params.getCurrencyCodeId().equals(defaultCurrency.getId())) {
             currencyCode = currencyService.getById(params.getCurrencyCodeId());
             amountInCurrency = params.getAmount();
             amountInBaseCurrency = amountInCurrency * currencyService.getCourseByCode(currencyCode.getCode());
         }else {
             amountInBaseCurrency = params.getAmount();
-
         }
+
         TransactionEntity transaction = new TransactionEntity();
         transaction.setCategory(category);
         transaction.setUser(user);
@@ -57,6 +58,13 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setDate(params.getDate());
         transaction.setDescription(params.getDescription());
         transaction.setBaseCurrencyCode(defaultCurrency);
+
         return transactionRepository.save(transaction);
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(Long id) {
+        transactionRepository.deleteById(id);
     }
 }

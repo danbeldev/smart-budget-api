@@ -44,4 +44,12 @@ public class TransactionController {
     ) {
         return transactionMapper.toDto(transactionService.create(jwt.getUserId(), params));
     }
+
+    @DeleteMapping("{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    private void deleteById(
+            @PathVariable Long id
+    ) {
+        transactionService.deleteById(id);
+    }
 }
