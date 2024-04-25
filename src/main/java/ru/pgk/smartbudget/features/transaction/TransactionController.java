@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.pgk.smartbudget.common.dto.PageDto;
@@ -12,7 +13,10 @@ import ru.pgk.smartbudget.features.transaction.dto.TransactionDto;
 import ru.pgk.smartbudget.features.transaction.dto.params.CreateTransactionParams;
 import ru.pgk.smartbudget.features.transaction.mappers.TransactionMapper;
 import ru.pgk.smartbudget.features.transaction.services.TransactionService;
+import ru.pgk.smartbudget.features.transaction.services.report.TransactionReportService;
 import ru.pgk.smartbudget.security.jwt.JwtEntity;
+
+import java.time.LocalDate;
 
 @Valid
 @RestController
@@ -21,6 +25,7 @@ import ru.pgk.smartbudget.security.jwt.JwtEntity;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final TransactionReportService transactionReportService;
 
     private final TransactionMapper transactionMapper;
 
@@ -34,6 +39,16 @@ public class TransactionController {
         return PageDto.fromPage(
                 transactionService.getAllByUserId(jwt.getUserId(), offset, limit).map(transactionMapper::toDto)
         );
+    }
+
+    @GetMapping("report.xls")
+    @SecurityRequirement(name = "bearerAuth")
+    private ResponseEntity<byte[]> generatedReport(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @AuthenticationPrincipal JwtEntity jwt
+    ) {
+        return transactionReportService.generatedReport(jwt.getUserId(), startDate, endDate);
     }
 
     @PostMapping

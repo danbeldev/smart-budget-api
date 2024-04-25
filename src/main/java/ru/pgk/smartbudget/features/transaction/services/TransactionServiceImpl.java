@@ -15,6 +15,10 @@ import ru.pgk.smartbudget.features.transaction.entitites.TransactionEntity;
 import ru.pgk.smartbudget.features.user.entities.UserEntity;
 import ru.pgk.smartbudget.features.user.services.UserService;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -29,6 +33,17 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional(readOnly = true)
     public Page<TransactionEntity> getAllByUserId(Long userId, Integer offset, Integer limit) {
         return transactionRepository.getAllByUserIdOrderByDateDesc(userId, PageRequest.of(offset, limit));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TransactionEntity> getAll(Long userId, LocalDate startDate, LocalDate endDate) {
+        return transactionRepository.findAll().stream()
+                .filter(transaction ->
+                        (userId == null || transaction.getUser().getId().equals(userId)) &&
+                                (startDate == null || !transaction.getDate().isBefore(startDate)) &&
+                                (endDate == null || !transaction.getDate().isAfter(endDate)))
+                .collect(Collectors.toList());
     }
 
     @Override

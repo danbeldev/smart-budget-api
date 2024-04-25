@@ -54,6 +54,10 @@ dependencies {
     implementation "io.jsonwebtoken:jjwt-api:${jjwt_version}"
     runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwt_version}"
     runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jjwt_version}"
+
+    //Apache POI
+    implementation 'org.apache.poi:poi:5.2.2'
+    implementation 'org.apache.poi:poi-ooxml:5.2.2'
 }
 
 tasks.named('test') {
