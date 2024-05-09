@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import ru.pgk.smartbudget.features.budget.entities.BudgetEntity;
 import ru.pgk.smartbudget.features.transaction.entitites.TransactionEntity;
+import ru.pgk.smartbudget.features.user.entities.UserEntity;
 
 import java.util.Collection;
 
@@ -16,6 +17,9 @@ public class ExpenseCategoryEntity {
     private Short id;
 
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UserEntity user;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private Collection<TransactionEntity> transactions;

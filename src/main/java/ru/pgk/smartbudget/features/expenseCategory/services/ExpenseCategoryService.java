@@ -6,6 +6,11 @@ import java.util.List;
 
 public interface ExpenseCategoryService {
 
-    List<ExpenseCategoryEntity> getAll();
+    List<ExpenseCategoryEntity> getAll(Long userId);
+
     ExpenseCategoryEntity getById(Short id);
+
+    ExpenseCategoryEntity create(String name, Long userId);
+
+    void deleteById(Short id);
 }
