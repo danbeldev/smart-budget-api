@@ -8,9 +8,9 @@ public interface ExpenseCategoryService {
 
     List<ExpenseCategoryEntity> getAll(Long userId);
 
-    ExpenseCategoryEntity getById(Short id);
+    ExpenseCategoryEntity getById(Integer id);
 
     ExpenseCategoryEntity create(String name, Long userId);
 
-    void deleteById(Short id);
+    void deleteById(Integer id);
 }

@@ -1,6 +1,6 @@
 package ru.pgk.smartbudget.features.expenseCategory.dto;
 
 public record ExpenseCategoryDto(
-   Short id,
+   Integer id,
    String name
 ) {}

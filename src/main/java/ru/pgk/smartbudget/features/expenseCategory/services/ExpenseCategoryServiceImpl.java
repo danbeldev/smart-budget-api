@@ -27,7 +27,7 @@ public class ExpenseCategoryServiceImpl implements ExpenseCategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public ExpenseCategoryEntity getById(Short id) {
+    public ExpenseCategoryEntity getById(Integer id) {
         return categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
     }
@@ -46,7 +46,7 @@ public class ExpenseCategoryServiceImpl implements ExpenseCategoryService {
 
     @Override
     @Transactional
-    public void deleteById(Short id) {
+    public void deleteById(Integer id) {
         categoryRepository.deleteById(id);
     }
 }

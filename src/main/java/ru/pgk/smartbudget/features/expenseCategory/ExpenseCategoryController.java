@@ -40,7 +40,7 @@ public class ExpenseCategoryController {
     @DeleteMapping("{id}")
     @SecurityRequirement(name = "bearerAuth")
     private void deleteById(
-            @PathVariable Short id
+            @PathVariable Integer id
     ) {
         expenseCategoryService.deleteById(id);
     }

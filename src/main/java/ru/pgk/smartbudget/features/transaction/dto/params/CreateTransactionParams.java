@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Data
 public class CreateTransactionParams {
 
-    private final Short categoryId;
+    private final Integer categoryId;
     private final Short currencyCodeId = null;
     private final Double amount;
     private final String description = null;

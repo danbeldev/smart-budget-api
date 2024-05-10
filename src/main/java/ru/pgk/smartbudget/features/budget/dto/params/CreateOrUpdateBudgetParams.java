@@ -10,5 +10,5 @@ public class CreateOrUpdateBudgetParams {
     private Double amountLimit;
     private LocalDate startDate = LocalDate.now();
     private LocalDate endDate = null;
-    private Short categoryId;
+    private Integer categoryId;
 }

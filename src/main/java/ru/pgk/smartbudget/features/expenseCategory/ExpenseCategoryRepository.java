@@ -6,8 +6,8 @@ import ru.pgk.smartbudget.features.expenseCategory.entitites.ExpenseCategoryEnti
 
 import java.util.List;
 
-public interface ExpenseCategoryRepository extends JpaRepository<ExpenseCategoryEntity, Short> {
+public interface ExpenseCategoryRepository extends JpaRepository<ExpenseCategoryEntity, Integer> {
 
-    @Query("SELECT c FROM expense_categories c WHERE c.user == NULL OR c.user.id = :userId")
+    @Query("SELECT c FROM expense_categories c WHERE c.user = NULL OR c.user.id = :userId")
     List<ExpenseCategoryEntity> findAllByUserId(Long userId);
 }

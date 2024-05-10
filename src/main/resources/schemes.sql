@@ -47,7 +47,7 @@ CREATE TABLE goals
 
 CREATE TABLE expense_categories
 (
-    id smallint generated always as identity,
+    id int generated always as identity,
     name varchar(48) not null,
     user_id bigint default null,
 
@@ -56,28 +56,41 @@ CREATE TABLE expense_categories
     CONSTRAINT UQ_expense_categories__name_user UNIQUE(name, user_id)
 );
 
+CREATE TABLE currencies
+(
+    id smallint generated always as identity,
+    code varchar(3) unique not null,
+
+    CONSTRAINT PK__currencies__key PRIMARY KEY(id)
+);
+
+INSERT INTO currencies(code) VALUES ('RUB'), ('CNY'), ('USD'), ('EUR');
+
 CREATE TABLE transactions
 (
     id bigint generated always as identity,
     user_id bigint not null,
-    category_id smallint not null,
-    currency_code varchar(3) default null,
+    category_id int not null,
+    currency_code_id smallint default null,
     amount_in_currency decimal(10, 2) default null,
-    base_currency_code varchar(3) not null default 'RUB',
+    base_currency_code_id smallint not null default 1,
     amount_in_base_currency decimal(10, 2) not null,
     description varchar(128) default null,
     date date not null default current_date,
 
     CONSTRAINT PK__transactions__key PRIMARY KEY(id),
     CONSTRAINT FK__transactions__user FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT FK__transactions__category FOREIGN KEY(category_id) REFERENCES expense_categories(id)
+    CONSTRAINT FK__transactions__category FOREIGN KEY(category_id) REFERENCES expense_categories(id),
+
+    CONSTRAINT FK__transactions__currency_code FOREIGN KEY(currency_code_id) REFERENCES currencies(id),
+    CONSTRAINT FK__transactions__base_currency_code FOREIGN KEY(base_currency_code_id) REFERENCES currencies(id)
 );
 
 CREATE TABLE budgets
 (
     id bigint generated always as identity,
     user_id bigint not null,
-    category_id smallint not null,
+    category_id int not null,
     amount_limit decimal(10, 2) not null,
     start_date date not null default current_date,
     end_date date default null,
@@ -115,7 +128,7 @@ CREATE TABLE recurring_transactions
 (
     id bigint generated always as identity,
     user_id bigint not null,
-    category_id smallint not null,
+    category_id int not null,
     frequency_id smallint not null,
     amount decimal(10, 2) not null,
     description varchar(48) not null,
