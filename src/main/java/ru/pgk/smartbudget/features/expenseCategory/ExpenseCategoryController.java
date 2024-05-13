@@ -1,15 +1,16 @@
 package ru.pgk.smartbudget.features.expenseCategory;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ru.pgk.smartbudget.common.dto.PageDto;
 import ru.pgk.smartbudget.features.expenseCategory.dto.ExpenseCategoryDto;
 import ru.pgk.smartbudget.features.expenseCategory.mappers.ExpenseCategoryMapper;
 import ru.pgk.smartbudget.features.expenseCategory.services.ExpenseCategoryService;
 import ru.pgk.smartbudget.security.jwt.JwtEntity;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("expense-categories")
@@ -22,10 +23,16 @@ public class ExpenseCategoryController {
 
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
-    private List<ExpenseCategoryDto> getAll(
+    private PageDto<ExpenseCategoryDto> getAll(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") @Min(0) Integer offset,
+            @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer limit,
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
-        return expenseCategoryMapper.toDto(expenseCategoryService.getAll(jwtEntity.getUserId()));
+        return PageDto.fromPage(
+                expenseCategoryService.getAll(search, jwtEntity.getUserId(), offset, limit)
+                        .map(expenseCategoryMapper::toDto)
+        );
     }
 
     @PostMapping

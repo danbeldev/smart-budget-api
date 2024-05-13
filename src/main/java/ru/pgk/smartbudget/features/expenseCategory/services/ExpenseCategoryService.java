@@ -1,12 +1,11 @@
 package ru.pgk.smartbudget.features.expenseCategory.services;
 
+import org.springframework.data.domain.Page;
 import ru.pgk.smartbudget.features.expenseCategory.entitites.ExpenseCategoryEntity;
-
-import java.util.List;
 
 public interface ExpenseCategoryService {
 
-    List<ExpenseCategoryEntity> getAll(Long userId);
+    Page<ExpenseCategoryEntity> getAll(String search, Long userId, Integer offset, Integer limit);
 
     ExpenseCategoryEntity getById(Integer id);
 
