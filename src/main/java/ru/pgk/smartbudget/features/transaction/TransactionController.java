@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.pgk.smartbudget.common.dto.PageDto;
 import ru.pgk.smartbudget.features.transaction.dto.TransactionDto;
 import ru.pgk.smartbudget.features.transaction.dto.params.CreateTransactionParams;
+import ru.pgk.smartbudget.features.transaction.dto.params.GetTransactionsParams;
+import ru.pgk.smartbudget.features.transaction.dto.params.TransactionOrderByType;
 import ru.pgk.smartbudget.features.transaction.mappers.TransactionMapper;
 import ru.pgk.smartbudget.features.transaction.services.TransactionService;
 import ru.pgk.smartbudget.features.transaction.services.report.TransactionReportService;
@@ -32,13 +34,28 @@ public class TransactionController {
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
     private PageDto<TransactionDto> getAll(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) Short currencyCodeId,
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) TransactionOrderByType orderByType,
             @RequestParam(defaultValue = "0") @Min(0) Integer offset,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer limit,
             @AuthenticationPrincipal JwtEntity jwt
     ) {
-        return PageDto.fromPage(
-                transactionService.getAllByUserId(jwt.getUserId(), offset, limit).map(transactionMapper::toDto)
-        );
+        GetTransactionsParams params = new GetTransactionsParams();
+        params.setUserId(jwt.getUserId());
+        params.setSearch(search);
+        params.setCategoryId(categoryId);
+        params.setCurrencyCodeId(currencyCodeId);
+        params.setStartDate(startDate);
+        params.setEndDate(endDate);
+        params.setOrderByType(orderByType);
+        params.setOffset(offset);
+        params.setLimit(limit);
+
+        return PageDto.fromPage(transactionService.getAll(params).map(transactionMapper::toDto));
     }
 
     @GetMapping("report.xls")
