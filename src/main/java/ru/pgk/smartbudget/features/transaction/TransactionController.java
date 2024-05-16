@@ -1,6 +1,8 @@
 package ru.pgk.smartbudget.features.transaction;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -29,6 +31,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/transactions")
 @RequiredArgsConstructor
+@Tag(name = "Transaction", description = "Information about the user's financial transactions")
 public class TransactionController {
 
     private final TransactionService transactionService;
@@ -97,6 +100,9 @@ public class TransactionController {
 
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
+    @Operation(
+            description = "currencyCodeId if null, then the base currency RUB is taken"
+    )
     private TransactionDto create(
             @RequestBody CreateTransactionParams params,
             @AuthenticationPrincipal JwtEntity jwt

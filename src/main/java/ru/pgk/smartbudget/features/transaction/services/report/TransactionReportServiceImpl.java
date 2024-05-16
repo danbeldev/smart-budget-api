@@ -50,7 +50,7 @@ public class TransactionReportServiceImpl implements TransactionReportService {
         workbook.close();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentDispositionFormData("filename", "report.xlsx");
+        headers.setContentDispositionFormData("filename", "transactions-report.xlsx");
 
         return ResponseEntity
                 .ok()

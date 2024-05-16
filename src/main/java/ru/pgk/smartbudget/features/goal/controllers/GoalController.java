@@ -1,6 +1,7 @@
 package ru.pgk.smartbudget.features.goal.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("goals")
 @RequiredArgsConstructor
+@Tag(name = "Goal", description = "Information about the user's financial goals")
 public class GoalController {
 
     private final GoalService goalService;

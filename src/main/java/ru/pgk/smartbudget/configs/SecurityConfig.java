@@ -50,6 +50,7 @@ public class SecurityConfig {
                     config.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/user/security/**").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/currencies").permitAll()
                             .anyRequest().authenticated();
                 })
                 .anonymous(AbstractHttpConfigurer::disable)

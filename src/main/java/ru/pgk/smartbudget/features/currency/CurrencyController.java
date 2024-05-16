@@ -1,6 +1,6 @@
 package ru.pgk.smartbudget.features.currency;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/currencies")
 @RequiredArgsConstructor
+@Tag(name = "Currency")
 public class CurrencyController {
 
     private final CurrencyService currencyService;
@@ -21,7 +22,6 @@ public class CurrencyController {
     private final CurrencyMapper currencyMapper;
 
     @GetMapping
-    @SecurityRequirement(name = "bearerAuth")
     private List<CurrencyDto> getAll() {
         return currencyMapper.toDto(currencyService.getAll());
     }

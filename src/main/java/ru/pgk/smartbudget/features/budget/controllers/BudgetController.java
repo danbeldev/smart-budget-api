@@ -1,6 +1,7 @@
 package ru.pgk.smartbudget.features.budget.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("budgets")
 @RequiredArgsConstructor
+@Tag(name = "Budget", description = "Information about the budget limits set by the user for the categories of expenses")
 public class BudgetController {
 
     private final BudgetService budgetService;

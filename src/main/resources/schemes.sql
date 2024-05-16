@@ -100,20 +100,6 @@ CREATE TABLE budgets
     CONSTRAINT FK__budgets__category FOREIGN KEY(category_id) REFERENCES expense_categories(id)
 );
 
-CREATE TABLE tax_records
-(
-    id bigint generated always as identity,
-    user_id bigint not null,
-    transaction_id bigint not null,
-    amount decimal(10, 2) not null,
-    tax_rate decimal(5, 2) not null,
-    tax_amount decimal(10, 2) not null,
-
-    CONSTRAINT PK__tax_records__key PRIMARY KEY(id),
-    CONSTRAINT FK__tax_records__user FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT FK__tax_records__transaction FOREIGN KEY(transaction_id) REFERENCES transactions(id)
-);
-
 CREATE TABLE recurring_transaction_frequencies
 (
     id  smallint generated always as identity,

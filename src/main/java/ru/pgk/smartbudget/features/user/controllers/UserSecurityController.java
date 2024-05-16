@@ -1,5 +1,6 @@
 package ru.pgk.smartbudget.features.user.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.pgk.smartbudget.features.user.entities.security.JwtRequestDto;
@@ -9,6 +10,7 @@ import ru.pgk.smartbudget.features.user.services.security.UserSecurityService;
 @RestController
 @RequestMapping("user/security")
 @RequiredArgsConstructor
+@Tag(name = "User security")
 public class UserSecurityController {
 
     private final UserSecurityService userSecurityService;

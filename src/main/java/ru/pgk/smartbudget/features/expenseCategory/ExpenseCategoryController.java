@@ -1,6 +1,7 @@
 package ru.pgk.smartbudget.features.expenseCategory;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import ru.pgk.smartbudget.security.jwt.JwtEntity;
 @RestController
 @RequestMapping("expense-categories")
 @RequiredArgsConstructor
+@Tag(name = "Expense category")
 public class ExpenseCategoryController {
 
     private final ExpenseCategoryService expenseCategoryService;
