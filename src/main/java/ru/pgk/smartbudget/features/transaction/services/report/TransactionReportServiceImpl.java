@@ -32,7 +32,7 @@ public class TransactionReportServiceImpl implements TransactionReportService {
 
     @Override
     @SneakyThrows
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseEntity<byte[]> generatedReport(Long userId, LocalDate startDate, LocalDate endDate) {
         List<TransactionEntity> transactions = transactionService.getAll(userId, startDate, endDate);
 

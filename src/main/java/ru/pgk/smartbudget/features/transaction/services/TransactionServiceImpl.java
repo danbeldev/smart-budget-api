@@ -77,6 +77,26 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<TransactionEntity> getAllByDate(Long userId, LocalDate startDate, LocalDate endDate) {
+        Specification<TransactionEntity> spec = Specification.where(null);
+
+        if(userId != null) {
+            spec = spec.and(TransactionSpecifications.byUserId(userId));
+        }
+
+        if(startDate != null) {
+            spec = spec.and(TransactionSpecifications.dateGreaterThanOrEqual(startDate));
+        }
+
+        if(endDate != null) {
+            spec = spec.and(TransactionSpecifications.dateLessThanOrEqual(endDate));
+        }
+
+        return transactionRepository.findAll(spec);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<TransactionEntity> getAll(Long userId, LocalDate startDate, LocalDate endDate) {
         return transactionRepository.findAll().stream()
                 .filter(transaction ->

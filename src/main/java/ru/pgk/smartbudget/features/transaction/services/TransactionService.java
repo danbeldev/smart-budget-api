@@ -12,6 +12,8 @@ public interface TransactionService {
 
     Page<TransactionEntity> getAll(GetTransactionsParams params);
 
+    List<TransactionEntity> getAllByDate(Long userId, LocalDate startDate, LocalDate endDate);
+
     List<TransactionEntity> getAll(Long userId, LocalDate startDate, LocalDate endDate);
 
     TransactionEntity create(Long userId, CreateTransactionParams params);
