@@ -66,43 +66,9 @@ CREATE TABLE currencies
 
 INSERT INTO currencies(code) VALUES ('RUB'), ('CNY'), ('USD'), ('EUR');
 
-CREATE TABLE transactions
-(
-    id bigint generated always as identity,
-    user_id bigint not null,
-    category_id int not null,
-    currency_code_id smallint default null,
-    amount_in_currency decimal(10, 2) default null,
-    base_currency_code_id smallint not null default 1,
-    amount_in_base_currency decimal(10, 2) not null,
-    description varchar(128) default null,
-    date date not null default current_date,
-
-    CONSTRAINT PK__transactions__key PRIMARY KEY(id),
-    CONSTRAINT FK__transactions__user FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT FK__transactions__category FOREIGN KEY(category_id) REFERENCES expense_categories(id),
-
-    CONSTRAINT FK__transactions__currency_code FOREIGN KEY(currency_code_id) REFERENCES currencies(id),
-    CONSTRAINT FK__transactions__base_currency_code FOREIGN KEY(base_currency_code_id) REFERENCES currencies(id)
-);
-
-CREATE TABLE budgets
-(
-    id bigint generated always as identity,
-    user_id bigint not null,
-    category_id int not null,
-    amount_limit decimal(10, 2) not null,
-    start_date date not null default current_date,
-    end_date date default null,
-
-    CONSTRAINT PK__budgets__key PRIMARY KEY(id),
-    CONSTRAINT FK__budgets__user FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT FK__budgets__category FOREIGN KEY(category_id) REFERENCES expense_categories(id)
-);
-
 CREATE TABLE recurring_transaction_frequencies
 (
-    id  smallint generated always as identity,
+    id smallint generated always as identity,
     name varchar(24) unique not null,
 
     CONSTRAINT PK__recurring_transaction_frequencies__key PRIMARY KEY(id)
@@ -117,11 +83,49 @@ CREATE TABLE recurring_transactions
     category_id int not null,
     frequency_id smallint not null,
     amount decimal(10, 2) not null,
-    description varchar(48) not null,
+    name varchar(48) not null,
     start_date date not null default current_date,
+    end_date date default null,
 
     CONSTRAINT PK__recurring_transactions__key PRIMARY KEY(id),
     CONSTRAINT FK__recurring_transactions__user FOREIGN KEY(user_id) REFERENCES users(id),
     CONSTRAINT FK__recurring_transactions__category FOREIGN KEY(category_id) REFERENCES expense_categories(id),
     constraint FK__recurring_transactions__frequency FOREIGN KEY(frequency_id) REFERENCES recurring_transaction_frequencies(id)
+);
+
+CREATE TABLE transactions
+(
+    id bigint generated always as identity,
+    user_id bigint not null,
+    category_id int not null,
+    currency_code_id smallint default null,
+    amount_in_currency decimal(10, 2) default null,
+    base_currency_code_id smallint not null default 1,
+    amount_in_base_currency decimal(10, 2) not null,
+    description varchar(128) default null,
+    recurring_transaction_id bigint default null,
+    date date not null default current_date,
+
+    CONSTRAINT PK__transactions__key PRIMARY KEY(id),
+    CONSTRAINT FK__transactions__user FOREIGN KEY(user_id) REFERENCES users(id),
+    CONSTRAINT FK__transactions__category FOREIGN KEY(category_id) REFERENCES expense_categories(id),
+
+    CONSTRAINT FK__transactions__currency_code FOREIGN KEY(currency_code_id) REFERENCES currencies(id),
+    CONSTRAINT FK__transactions__base_currency_code FOREIGN KEY(base_currency_code_id) REFERENCES currencies(id),
+
+    CONSTRAINT FK__transactions__recurring_transaction FOREIGN KEY(recurring_transaction_id) REFERENCES recurring_transactions(id)
+);
+
+CREATE TABLE budgets
+(
+    id bigint generated always as identity,
+    user_id bigint not null,
+    category_id int not null,
+    amount_limit decimal(10, 2) not null,
+    start_date date not null default current_date,
+    is_achieved boolean not null default true,
+
+    CONSTRAINT PK__budgets__key PRIMARY KEY(id),
+    CONSTRAINT FK__budgets__user FOREIGN KEY(user_id) REFERENCES users(id),
+    CONSTRAINT FK__budgets__category FOREIGN KEY(category_id) REFERENCES expense_categories(id)
 );

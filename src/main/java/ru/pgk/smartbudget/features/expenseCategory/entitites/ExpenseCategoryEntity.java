@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import ru.pgk.smartbudget.features.budget.entities.BudgetEntity;
 import ru.pgk.smartbudget.features.transaction.entitites.TransactionEntity;
+import ru.pgk.smartbudget.features.transaction.entitites.recurring.RecurringTransactionEntity;
 import ru.pgk.smartbudget.features.user.entities.UserEntity;
 
 import java.util.Collection;
@@ -26,4 +27,7 @@ public class ExpenseCategoryEntity {
 
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private Collection<BudgetEntity> budgets;
+
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private Collection<RecurringTransactionEntity> recurringTransactions;
 }

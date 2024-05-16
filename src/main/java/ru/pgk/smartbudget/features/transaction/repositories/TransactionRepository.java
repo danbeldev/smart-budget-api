@@ -1,4 +1,4 @@
-package ru.pgk.smartbudget.features.transaction;
+package ru.pgk.smartbudget.features.transaction.repositories;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

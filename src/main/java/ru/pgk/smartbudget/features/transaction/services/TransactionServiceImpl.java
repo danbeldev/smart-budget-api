@@ -12,7 +12,7 @@ import ru.pgk.smartbudget.features.currency.entities.CurrencyEntity;
 import ru.pgk.smartbudget.features.currency.services.CurrencyService;
 import ru.pgk.smartbudget.features.expenseCategory.entitites.ExpenseCategoryEntity;
 import ru.pgk.smartbudget.features.expenseCategory.services.ExpenseCategoryService;
-import ru.pgk.smartbudget.features.transaction.TransactionRepository;
+import ru.pgk.smartbudget.features.transaction.repositories.TransactionRepository;
 import ru.pgk.smartbudget.features.transaction.dto.params.CreateTransactionParams;
 import ru.pgk.smartbudget.features.transaction.dto.params.GetTransactionsParams;
 import ru.pgk.smartbudget.features.transaction.entitites.TransactionEntity;
