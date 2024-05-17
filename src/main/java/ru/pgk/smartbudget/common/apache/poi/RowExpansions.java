@@ -42,4 +42,9 @@ public class RowExpansions {
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         return cellStyle;
     }
+
+    public static Row getOrCreateRow(Sheet sheet, Integer rowNum) {
+        Row row = sheet.getRow(rowNum);
+        return row == null ? sheet.createRow(rowNum) : row;
+    }
 }

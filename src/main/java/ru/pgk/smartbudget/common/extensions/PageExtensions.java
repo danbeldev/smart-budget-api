@@ -7,7 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import java.util.Collection;
 import java.util.List;
 
-public class PageExtension {
+public class PageExtensions {
 
     public static <T> Page<T> toPage(
             Collection<T> elements,
