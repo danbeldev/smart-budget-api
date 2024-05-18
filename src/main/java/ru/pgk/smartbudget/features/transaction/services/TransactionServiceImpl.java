@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.pgk.smartbudget.common.exceptions.ResourceNotFoundException;
 import ru.pgk.smartbudget.features.currency.entities.CurrencyEntity;
 import ru.pgk.smartbudget.features.currency.services.CurrencyService;
 import ru.pgk.smartbudget.features.expenseCategory.entitites.ExpenseCategoryEntity;
@@ -33,6 +34,13 @@ public class TransactionServiceImpl implements TransactionService {
     private final ExpenseCategoryService expenseCategoryService;
     private final CurrencyService currencyService;
     private final UserService userService;
+
+    @Override
+    @Transactional(readOnly = true)
+    public TransactionEntity getById(Long id) {
+        return transactionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Transaction not found"));
+    }
 
     @Override
     @Transactional(readOnly = true)

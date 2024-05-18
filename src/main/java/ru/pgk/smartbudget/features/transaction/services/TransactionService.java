@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface TransactionService {
 
+    TransactionEntity getById(Long id);
+
     Page<TransactionEntity> getAll(GetTransactionsParams params);
 
     List<TransactionEntity> getAllByDate(Long userId, LocalDate startDate, LocalDate endDate);
