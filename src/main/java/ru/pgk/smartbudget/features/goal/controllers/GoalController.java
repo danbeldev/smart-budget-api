@@ -2,10 +2,13 @@ package ru.pgk.smartbudget.features.goal.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pgk.smartbudget.common.dto.PageDto;
 import ru.pgk.smartbudget.features.goal.dto.GoalDto;
@@ -18,6 +21,7 @@ import ru.pgk.smartbudget.security.jwt.JwtEntity;
 
 import java.time.LocalDate;
 
+@Valid
 @RestController
 @RequestMapping("goals")
 @RequiredArgsConstructor
@@ -36,8 +40,16 @@ public class GoalController {
             @RequestParam(required = false) LocalDate deadlineStartDate,
             @RequestParam(required = false) LocalDate deadlineEndDate,
             @RequestParam(required = false) GoalOrderByType orderByType,
-            @RequestParam(defaultValue = "0") @Min(0) Integer offset,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer limit,
+
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "offset must be greater than or equal to zero")
+            Integer offset,
+
+            @RequestParam(defaultValue = "20")
+            @Min(value = 1, message = "limit must be greater than or equal to one")
+            @Max(value = 100, message = "limit must be less than or equal to one hundred")
+            Integer limit,
+
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
         GetGoalsParams params = new GetGoalsParams();
@@ -56,7 +68,7 @@ public class GoalController {
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
     private GoalDto create(
-            @RequestBody CreateOrUpdateGoalParams params,
+            @Validated @RequestBody CreateOrUpdateGoalParams params,
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
         return goalMapper.toDto(goalService.create(jwtEntity.getUserId(), params));
@@ -66,7 +78,7 @@ public class GoalController {
     @SecurityRequirement(name = "bearerAuth")
     private GoalDto update(
             @PathVariable Long id,
-            @RequestBody CreateOrUpdateGoalParams params
+            @Validated @RequestBody CreateOrUpdateGoalParams params
     ) {
         return goalMapper.toDto(goalService.update(id, params));
     }
@@ -75,7 +87,10 @@ public class GoalController {
     @SecurityRequirement(name = "bearerAuth")
     private void updateCurrentAmount(
             @PathVariable Long id,
-            @RequestParam Double amount
+
+            @DecimalMin(value = "0.1", message = "amount must be greater than or equal to 0.1")
+            @RequestParam
+            Double amount
     ) {
         goalService.updateCurrentAmount(id, amount);
     }

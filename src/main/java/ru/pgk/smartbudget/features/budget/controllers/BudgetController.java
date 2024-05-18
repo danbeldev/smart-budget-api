@@ -2,10 +2,12 @@ package ru.pgk.smartbudget.features.budget.controllers;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pgk.smartbudget.common.dto.PageDto;
 import ru.pgk.smartbudget.features.budget.dto.BudgetDto;
@@ -18,6 +20,7 @@ import ru.pgk.smartbudget.security.jwt.JwtEntity;
 
 import java.time.LocalDate;
 
+@Valid
 @RestController
 @RequestMapping("budgets")
 @RequiredArgsConstructor
@@ -35,8 +38,16 @@ public class BudgetController {
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             @RequestParam(required = false) BudgetOrderByType orderByType,
-            @RequestParam(defaultValue = "0") @Min(0) Integer offset,
-            @RequestParam(defaultValue = "1") @Min(1) @Max(100) Integer limit,
+
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "offset must be greater than or equal to zero")
+            Integer offset,
+
+            @RequestParam(defaultValue = "1")
+            @Min(value = 1, message = "limit must be greater than or equal to one")
+            @Max(value = 100, message = "limit must be less than or equal to one hundred")
+            Integer limit,
+
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
         GetBudgetsParams params = new GetBudgetsParams();
@@ -62,7 +73,7 @@ public class BudgetController {
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
     private BudgetDto create(
-            @RequestBody CreateOrUpdateBudgetParams params,
+            @Validated @RequestBody CreateOrUpdateBudgetParams params,
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
         return budgetMapper.toDto(budgetService.create(jwtEntity.getUserId(), params));
@@ -72,7 +83,7 @@ public class BudgetController {
     @SecurityRequirement(name = "bearerAuth")
     private void update(
             @PathVariable Long id,
-            @RequestBody CreateOrUpdateBudgetParams params
+            @Validated @RequestBody CreateOrUpdateBudgetParams params
     ) {
         budgetService.update(id, params);
     }

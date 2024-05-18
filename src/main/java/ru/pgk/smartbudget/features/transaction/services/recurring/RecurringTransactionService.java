@@ -12,5 +12,5 @@ public interface RecurringTransactionService {
 
     RecurringTransactionEntity add(Long userId, CreateRecurringTransactionParams params);
 
-    void updateIsAchieved(Long id, Boolean isAchieved);
+    void makeInactive(Long id);
 }

@@ -14,6 +14,7 @@ public class RecurringTransactionFrequencyEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Short id;
 
+    @Enumerated(EnumType.STRING)
     private Name name;
 
     @OneToMany(mappedBy = "frequency", fetch = FetchType.LAZY)

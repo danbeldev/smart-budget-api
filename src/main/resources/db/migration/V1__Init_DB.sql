@@ -37,12 +37,15 @@ CREATE TABLE goals
     user_id bigint not null,
     name varchar(48) not null,
     target_amount decimal(10,2) not null,
-    current_amount decimal(10, 2) not null,
+    current_amount decimal(10, 2) not null default 0,
     deadline date default null,
     is_achieved boolean not null default true,
 
     CONSTRAINT PK__goals__key PRIMARY KEY(id),
-    CONSTRAINT FK__goals__user FOREIGN KEY(user_id) REFERENCES users(id)
+    CONSTRAINT FK__goals__user FOREIGN KEY(user_id) REFERENCES users(id),
+
+    CONSTRAINT CK__goals__target_amount CHECK (target_amount > 0),
+    CONSTRAINT CK__goals__current_amount CHECK (current_amount >= 0)
 );
 
 CREATE TABLE expense_categories
@@ -90,7 +93,10 @@ CREATE TABLE recurring_transactions
     CONSTRAINT PK__recurring_transactions__key PRIMARY KEY(id),
     CONSTRAINT FK__recurring_transactions__user FOREIGN KEY(user_id) REFERENCES users(id),
     CONSTRAINT FK__recurring_transactions__category FOREIGN KEY(category_id) REFERENCES expense_categories(id),
-    constraint FK__recurring_transactions__frequency FOREIGN KEY(frequency_id) REFERENCES recurring_transaction_frequencies(id)
+    constraint FK__recurring_transactions__frequency FOREIGN KEY(frequency_id) REFERENCES recurring_transaction_frequencies(id),
+
+    CONSTRAINT CK__recurring_transactions__amount CHECK (amount > 0),
+    CONSTRAINT CK__recurring_transactions__date CHECK (start_date <= end_date)
 );
 
 CREATE TABLE transactions
@@ -113,7 +119,10 @@ CREATE TABLE transactions
     CONSTRAINT FK__transactions__currency_code FOREIGN KEY(currency_code_id) REFERENCES currencies(id),
     CONSTRAINT FK__transactions__base_currency_code FOREIGN KEY(base_currency_code_id) REFERENCES currencies(id),
 
-    CONSTRAINT FK__transactions__recurring_transaction FOREIGN KEY(recurring_transaction_id) REFERENCES recurring_transactions(id)
+    CONSTRAINT FK__transactions__recurring_transaction FOREIGN KEY(recurring_transaction_id) REFERENCES recurring_transactions(id),
+
+    CONSTRAINT CK__transactions__amount_in_currency CHECK (amount_in_currency > 0),
+    CONSTRAINT CK__transactions__amount_in_base_currency CHECK (amount_in_base_currency > 0)
 );
 
 CREATE TABLE budgets
@@ -123,9 +132,13 @@ CREATE TABLE budgets
     category_id int not null,
     amount_limit decimal(10, 2) not null,
     start_date date not null default current_date,
+    end_date date not null,
     is_achieved boolean not null default true,
 
     CONSTRAINT PK__budgets__key PRIMARY KEY(id),
     CONSTRAINT FK__budgets__user FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT FK__budgets__category FOREIGN KEY(category_id) REFERENCES expense_categories(id)
+    CONSTRAINT FK__budgets__category FOREIGN KEY(category_id) REFERENCES expense_categories(id),
+
+    CONSTRAINT CK__budgets__amount_limit CHECK (amount_limit > 0),
+    CONSTRAINT CK__budgets__data CHECK (start_date <= end_date)
 );

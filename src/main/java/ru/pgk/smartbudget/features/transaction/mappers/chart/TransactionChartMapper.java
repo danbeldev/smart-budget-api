@@ -25,6 +25,7 @@ public class TransactionChartMapper {
 
         List<TransactionChartDto> transactionChart = new ArrayList<>();
 
+        // TODO: grouping by category and currency
         transactionsByDate.forEach((date, values) -> {
             List<TransactionChartPointDto> points = new ArrayList<>();
             values.forEach(value -> {

@@ -1,12 +1,15 @@
 package ru.pgk.smartbudget.features.user.controllers;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pgk.smartbudget.features.user.entities.security.JwtRequestDto;
 import ru.pgk.smartbudget.features.user.entities.security.JwtResponseDto;
 import ru.pgk.smartbudget.features.user.services.security.UserSecurityService;
 
+@Valid
 @RestController
 @RequestMapping("user/security")
 @RequiredArgsConstructor
@@ -17,14 +20,14 @@ public class UserSecurityController {
 
     @PostMapping("login")
     private JwtResponseDto login(
-            @RequestBody JwtRequestDto request
+            @Validated @RequestBody JwtRequestDto request
     ) {
         return userSecurityService.login(request);
     }
 
     @PostMapping("registration")
     private JwtResponseDto registration(
-            @RequestBody JwtRequestDto request
+            @Validated @RequestBody JwtRequestDto request
     ) {
         return userSecurityService.registration(request);
     }

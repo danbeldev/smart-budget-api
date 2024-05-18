@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pgk.smartbudget.common.dto.PageDto;
 import ru.pgk.smartbudget.features.transaction.dto.TransactionDto;
@@ -49,8 +50,16 @@ public class TransactionController {
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             @RequestParam(required = false) TransactionOrderByType orderByType,
-            @RequestParam(defaultValue = "0") @Min(0) Integer offset,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer limit,
+
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "offset must be greater than or equal to zero")
+            Integer offset,
+
+            @RequestParam(defaultValue = "1")
+            @Min(value = 1, message = "limit must be greater than or equal to one")
+            @Max(value = 100, message = "limit must be less than or equal to one hundred")
+            Integer limit,
+
             @AuthenticationPrincipal JwtEntity jwt
     ) {
         GetTransactionsParams params = new GetTransactionsParams();
@@ -104,7 +113,7 @@ public class TransactionController {
             description = "currencyCodeId if null, then the base currency RUB is taken"
     )
     private TransactionDto create(
-            @RequestBody CreateTransactionParams params,
+            @Validated @RequestBody CreateTransactionParams params,
             @AuthenticationPrincipal JwtEntity jwt
     ) {
         return transactionMapper.toDto(transactionService.create(jwt.getUserId(), params));

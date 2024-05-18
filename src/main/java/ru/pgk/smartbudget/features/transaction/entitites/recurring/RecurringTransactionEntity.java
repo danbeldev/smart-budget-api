@@ -17,9 +17,9 @@ public class RecurringTransactionEntity {
     private Long id;
 
     private String name;
-    private Float amount;
+    private Double amount;
     private LocalDate startDate;
-    private Boolean isAchieved;
+    private LocalDate endDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private RecurringTransactionFrequencyEntity frequency;

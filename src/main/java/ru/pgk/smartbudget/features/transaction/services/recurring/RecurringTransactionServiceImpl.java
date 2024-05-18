@@ -12,10 +12,11 @@ import ru.pgk.smartbudget.features.transaction.dto.recurring.params.CreateRecurr
 import ru.pgk.smartbudget.features.transaction.entitites.recurring.RecurringTransactionEntity;
 import ru.pgk.smartbudget.features.transaction.entitites.recurring.frequency.RecurringTransactionFrequencyEntity;
 import ru.pgk.smartbudget.features.transaction.repositories.recurring.RecurringTransactionRepository;
-import ru.pgk.smartbudget.features.transaction.repositories.recurring.frequency.RecurringTransactionFrequencyRepository;
 import ru.pgk.smartbudget.features.transaction.services.recurring.frequency.RecurringTransactionFrequencyService;
 import ru.pgk.smartbudget.features.user.entities.UserEntity;
 import ru.pgk.smartbudget.features.user.services.UserService;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -57,16 +58,16 @@ public class RecurringTransactionServiceImpl implements RecurringTransactionServ
         recurringTransaction.setName(recurringTransaction.getName());
         recurringTransaction.setAmount(recurringTransaction.getAmount());
         recurringTransaction.setStartDate(recurringTransaction.getStartDate());
-        recurringTransaction.setIsAchieved(true);
+        recurringTransaction.setEndDate(params.endDate());
 
         return recurringTransactionRepository.save(recurringTransaction);
     }
 
     @Override
     @Transactional
-    public void updateIsAchieved(Long id, Boolean isAchieved) {
+    public void makeInactive(Long id) {
         RecurringTransactionEntity recurringTransaction = getById(id);
-        recurringTransaction.setIsAchieved(isAchieved);
+        recurringTransaction.setEndDate(LocalDate.now());
         recurringTransactionRepository.save(recurringTransaction);
     }
 }

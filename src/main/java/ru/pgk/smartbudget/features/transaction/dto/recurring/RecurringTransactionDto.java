@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public record RecurringTransactionDto(
    Long id,
    String name,
-   Float amount,
+   Double amount,
    RecurringTransactionFrequencyEntity.Name frequency,
    LocalDate startDate,
    Boolean isAchieved,

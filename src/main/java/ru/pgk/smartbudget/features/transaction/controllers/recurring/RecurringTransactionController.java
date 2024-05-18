@@ -2,10 +2,12 @@ package ru.pgk.smartbudget.features.transaction.controllers.recurring;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.pgk.smartbudget.common.dto.PageDto;
 import ru.pgk.smartbudget.features.transaction.dto.recurring.RecurringTransactionDto;
@@ -14,6 +16,7 @@ import ru.pgk.smartbudget.features.transaction.mappers.recurring.RecurringTransa
 import ru.pgk.smartbudget.features.transaction.services.recurring.RecurringTransactionService;
 import ru.pgk.smartbudget.security.jwt.JwtEntity;
 
+@Valid
 @RestController
 @RequestMapping("recurring-transactions")
 @RequiredArgsConstructor
@@ -30,8 +33,16 @@ public class RecurringTransactionController {
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
     private PageDto<RecurringTransactionDto> getAll(
-            @RequestParam(required = false, defaultValue = "0") @Min(0) Integer offset,
-            @RequestParam(required = false, defaultValue = "20") @Min(1) @Max(100) Integer limit,
+
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "offset must be greater than or equal to zero")
+            Integer offset,
+
+            @RequestParam(defaultValue = "1")
+            @Min(value = 1, message = "limit must be greater than or equal to one")
+            @Max(value = 100, message = "limit must be less than or equal to one hundred")
+            Integer limit,
+
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
         return PageDto.fromPage(
@@ -43,19 +54,18 @@ public class RecurringTransactionController {
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
     private RecurringTransactionDto add(
-            @RequestBody CreateRecurringTransactionParams params,
+            @Validated @RequestBody CreateRecurringTransactionParams params,
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
         return recurringTransactionMapper.toDto(recurringTransactionService.add(jwtEntity.getUserId(), params));
     }
 
-    @PatchMapping("{id}/is-achieved")
+    @PatchMapping("{id}/make-inactive")
     @SecurityRequirement(name = "bearerAuth")
-    private void updateIsAchieved(
+    private void makeInactive(
             @PathVariable Long id,
-            @RequestParam Boolean isAchieved,
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
-        recurringTransactionService.updateIsAchieved(id, isAchieved);
+        recurringTransactionService.makeInactive(id);
     }
 }

@@ -2,9 +2,11 @@ package ru.pgk.smartbudget.features.expenseCategory;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.pgk.smartbudget.common.dto.PageDto;
@@ -13,6 +15,7 @@ import ru.pgk.smartbudget.features.expenseCategory.mappers.ExpenseCategoryMapper
 import ru.pgk.smartbudget.features.expenseCategory.services.ExpenseCategoryService;
 import ru.pgk.smartbudget.security.jwt.JwtEntity;
 
+@Valid
 @RestController
 @RequestMapping("expense-categories")
 @RequiredArgsConstructor
@@ -27,8 +30,16 @@ public class ExpenseCategoryController {
     @SecurityRequirement(name = "bearerAuth")
     private PageDto<ExpenseCategoryDto> getAll(
             @RequestParam(required = false) String search,
-            @RequestParam(defaultValue = "0") @Min(0) Integer offset,
-            @RequestParam(defaultValue = "20") @Min(1) @Max(100) Integer limit,
+
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "offset must be greater than or equal to zero")
+            Integer offset,
+
+            @RequestParam(defaultValue = "20")
+            @Min(value = 1, message = "limit must be greater than or equal to one")
+            @Max(value = 100, message = "limit must be less than or equal to one hundred")
+            Integer limit,
+
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
         return PageDto.fromPage(
@@ -40,7 +51,9 @@ public class ExpenseCategoryController {
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
     private ExpenseCategoryDto create(
-            @RequestParam String name,
+            @RequestParam
+            @Length(max = 48, message = "name must be smaller than 48 symbols")
+            String name,
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
         return expenseCategoryMapper.toDto(expenseCategoryService.create(name, jwtEntity.getUserId()));
