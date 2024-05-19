@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'gradle:6.8.3-jdk17'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     stages {
 
@@ -29,32 +24,52 @@ pipeline {
 
         stage('Flyway Migrate') {
             steps {
-                sh './gradlew flywayMigrate'
+                script {
+                    docker.image('gradle:6.8.3-jdk17').inside {
+                        sh './gradlew flywayMigrate'
+                    }
+                }
             }
         }
 
         stage('Build') {
             steps {
-                sh './gradlew clean build'
+                script {
+                    docker.image('gradle:6.8.3-jdk17').inside {
+                        sh './gradlew clean build'
+                    }
+                }
             }
         }
 
         stage('Test') {
             steps {
-                sh './gradlew test'
+                script {
+                    docker.image('gradle:6.8.3-jdk17').inside {
+                        sh './gradlew test'
+                    }
+                }
             }
         }
 
         stage('Archive Results') {
             steps {
-                archiveArtifacts artifacts: 'build/libs/*.jar', allowEmptyArchive: true
-                junit 'build/test-results/test/*.xml'
+                script {
+                    docker.image('gradle:6.8.3-jdk17').inside {
+                        archiveArtifacts artifacts: 'build/libs/*.jar', allowEmptyArchive: true
+                        junit 'build/test-results/test/*.xml'
+                    }
+                }
             }
         }
 
         stage('Run Application') {
             steps {
-                sh 'nohup java -jar build/libs/smart-budget-0.0.1-SNAPSHOT.jar &'
+                script {
+                    docker.image('openjdk:17').inside {
+                        sh 'nohup java -jar build/libs/smart-budget-0.0.1-SNAPSHOT.jar &'
+                    }
+                }
             }
         }
     }
