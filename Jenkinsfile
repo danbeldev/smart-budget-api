@@ -33,11 +33,7 @@ pipeline {
             }
         }
 
-        stage('Flyway Migrate') {
-            steps {
-                sh './gradlew flywayMigrate'
-            }
-        }
+
 
         stage('Build') {
             steps {
