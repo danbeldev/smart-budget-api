@@ -61,6 +61,9 @@ public class RecurringTransactionController {
             @Validated @RequestBody CreateRecurringTransactionParams params,
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessGetExpenseCategory(jwtEntity.getUserId(), params.categoryId()))
+            throw new AccessDeniedException("Access is denied");
+
         return recurringTransactionMapper.toDto(recurringTransactionService.add(jwtEntity.getUserId(), params));
     }
 

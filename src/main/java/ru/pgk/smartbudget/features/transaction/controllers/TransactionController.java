@@ -118,9 +118,12 @@ public class TransactionController {
     )
     private TransactionDto create(
             @Validated @RequestBody CreateTransactionParams params,
-            @AuthenticationPrincipal JwtEntity jwt
+            @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
-        return transactionMapper.toDto(transactionService.create(jwt.getUserId(), params));
+        if(!customSecurityExpression.canAccessGetExpenseCategory(jwtEntity.getUserId(), params.getCategoryId()))
+            throw new AccessDeniedException("Access is denied");
+
+        return transactionMapper.toDto(transactionService.create(jwtEntity.getUserId(), params));
     }
 
     @DeleteMapping("{id}")

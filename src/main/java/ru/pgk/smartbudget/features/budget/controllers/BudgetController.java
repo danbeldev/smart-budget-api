@@ -84,6 +84,9 @@ public class BudgetController {
             @Validated @RequestBody CreateOrUpdateBudgetParams params,
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessGetExpenseCategory(jwtEntity.getUserId(), params.getCategoryId()))
+            throw new AccessDeniedException("Access is denied");
+
         return budgetMapper.toDto(budgetService.create(jwtEntity.getUserId(), params));
     }
 
@@ -94,7 +97,8 @@ public class BudgetController {
             @Validated @RequestBody CreateOrUpdateBudgetParams params,
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
-        if(!customSecurityExpression.canAccessBudget(jwtEntity.getUserId(), id))
+        if(!customSecurityExpression.canAccessBudget(jwtEntity.getUserId(), id) ||
+                !customSecurityExpression.canAccessGetExpenseCategory(jwtEntity.getUserId(), params.getCategoryId()))
             throw new AccessDeniedException("Access is denied");
 
         budgetService.update(id, params);

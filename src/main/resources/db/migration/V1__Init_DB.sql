@@ -9,28 +9,6 @@ CREATE TABLE users
     CONSTRAINT PK__users__key PRIMARY KEY(id)
 );
 
-CREATE TABLE user_token_types
-(
-    id smallint generated always as identity,
-    name varchar(24) unique not null,
-
-    CONSTRAINT PK__user_token_types__key PRIMARY KEY(id)
-);
-
-INSERT INTO user_token_types (name) VALUES ('EMAIL_CHECK'), ('EMAIL_PASSWORD_RESET');
-
-CREATE TABLE user_tokens
-(
-    user_id bigint,
-    type_id smallint,
-    token uuid not null default uuid_generate_v4(),
-    expiration_time timestamp not null default current_date,
-
-    CONSTRAINT PK__user_tokens__key PRIMARY KEY(user_id, type_id),
-    CONSTRAINT FK__user_tokens__user FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT FK__user_tokens__type FOREIGN KEY(type_id) REFERENCES user_token_types(id)
-);
-
 CREATE TABLE goals
 (
     id bigint generated always as identity,

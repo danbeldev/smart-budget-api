@@ -28,6 +28,11 @@ public class CustomSecurityExpression {
         return budget.getUser().getId().equals(userId);
     }
 
+    public Boolean canAccessGetExpenseCategory(Long userId, Integer categoryId) {
+        ExpenseCategoryEntity category = expenseCategoryService.getById(categoryId);
+        return category.getUser() == null || category.getUser().getId().equals(userId);
+    }
+
     public Boolean canAccessExpenseCategory(Long userId, Integer categoryId) {
         ExpenseCategoryEntity category = expenseCategoryService.getById(categoryId);
         return category.getUser() != null && category.getUser().getId().equals(userId);
