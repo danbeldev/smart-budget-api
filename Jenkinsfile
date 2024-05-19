@@ -61,22 +61,16 @@ pipeline {
         stage('Run Application') {
             steps {
                 script {
-                    sh 'nohup java -jar build/libs/smart-budget-0.0.1-SNAPSHOT.jar &'
-                    sleep(time: 10, unit: "SECONDS") // Wait for the application to start
-                    sh '''
-                        if ps aux | grep "[j]ava -jar build/libs/smart-budget-0.0.1-SNAPSHOT.jar"; then
-                            echo "Application is running"
-                        else
-                            echo "Application is not running"
-                            exit 1
-                        fi
-                    '''
+                    sh 'java -jar build/libs/*.jar'
                 }
             }
         }
     }
 
     post {
+        always {
+            cleanWs()
+        }
         success {
             echo 'Build, tests, and application startup succeeded!'
         }
