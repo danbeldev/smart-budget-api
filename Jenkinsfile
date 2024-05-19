@@ -60,14 +60,15 @@ pipeline {
 
         stage('Run Application') {
             steps {
-                script {
-                    sh 'screen -S smart-budget java -jar build/libs/smart-budget-0.0.1-SNAPSHOT.jar'
-                }
+                 sh 'screen -S smart-budget java -jar build/libs/smart-budget-0.0.1-SNAPSHOT.jar'
             }
         }
     }
 
     post {
+        always {
+            cleanWs()
+        }
         success {
             echo 'Build, tests, and application startup succeeded!'
         }
