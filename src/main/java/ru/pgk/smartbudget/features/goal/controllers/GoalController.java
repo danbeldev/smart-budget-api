@@ -7,6 +7,7 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import ru.pgk.smartbudget.features.goal.dto.params.GetGoalsParams;
 import ru.pgk.smartbudget.features.goal.dto.params.GoalOrderByType;
 import ru.pgk.smartbudget.features.goal.mappers.GoalMapper;
 import ru.pgk.smartbudget.features.goal.services.GoalService;
+import ru.pgk.smartbudget.security.expressions.CustomSecurityExpression;
 import ru.pgk.smartbudget.security.jwt.JwtEntity;
 
 import java.time.LocalDate;
@@ -31,6 +33,8 @@ public class GoalController {
     private final GoalService goalService;
 
     private final GoalMapper goalMapper;
+
+    private final CustomSecurityExpression customSecurityExpression;
 
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
@@ -78,8 +82,12 @@ public class GoalController {
     @SecurityRequirement(name = "bearerAuth")
     private GoalDto update(
             @PathVariable Long id,
-            @Validated @RequestBody CreateOrUpdateGoalParams params
+            @Validated @RequestBody CreateOrUpdateGoalParams params,
+            @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessGoal(jwtEntity.getUserId(), id))
+            throw new AccessDeniedException("Access is denied");
+
         return goalMapper.toDto(goalService.update(id, params));
     }
 
@@ -90,16 +98,25 @@ public class GoalController {
 
             @DecimalMin(value = "0.1", message = "amount must be greater than or equal to 0.1")
             @RequestParam
-            Double amount
+            Double amount,
+
+            @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessGoal(jwtEntity.getUserId(), id))
+            throw new AccessDeniedException("Access is denied");
+
         goalService.updateCurrentAmount(id, amount);
     }
 
     @DeleteMapping("{id}")
     @SecurityRequirement(name = "bearerAuth")
     private void deleteById(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessGoal(jwtEntity.getUserId(), id))
+            throw new AccessDeniedException("Access is denied");
+
         goalService.deleteById(id);
     }
 }

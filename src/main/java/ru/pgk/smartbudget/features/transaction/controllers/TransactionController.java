@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ import ru.pgk.smartbudget.features.transaction.mappers.TransactionMapper;
 import ru.pgk.smartbudget.features.transaction.mappers.chart.TransactionChartMapper;
 import ru.pgk.smartbudget.features.transaction.services.TransactionService;
 import ru.pgk.smartbudget.features.transaction.services.report.TransactionReportService;
+import ru.pgk.smartbudget.security.expressions.CustomSecurityExpression;
 import ru.pgk.smartbudget.security.jwt.JwtEntity;
 
 import java.time.LocalDate;
@@ -40,6 +42,8 @@ public class TransactionController {
 
     private final TransactionMapper transactionMapper;
     private final TransactionChartMapper transactionChartMapper;
+
+    private final CustomSecurityExpression customSecurityExpression;
 
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
@@ -122,8 +126,12 @@ public class TransactionController {
     @DeleteMapping("{id}")
     @SecurityRequirement(name = "bearerAuth")
     private void deleteById(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessTransaction(jwtEntity.getUserId(), id))
+            throw new AccessDeniedException("Access is denied");
+
         transactionService.deleteById(id);
     }
 }

@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import ru.pgk.smartbudget.features.transaction.dto.recurring.RecurringTransactio
 import ru.pgk.smartbudget.features.transaction.dto.recurring.params.CreateRecurringTransactionParams;
 import ru.pgk.smartbudget.features.transaction.mappers.recurring.RecurringTransactionMapper;
 import ru.pgk.smartbudget.features.transaction.services.recurring.RecurringTransactionService;
+import ru.pgk.smartbudget.security.expressions.CustomSecurityExpression;
 import ru.pgk.smartbudget.security.jwt.JwtEntity;
 
 @Valid
@@ -29,6 +31,8 @@ public class RecurringTransactionController {
     private final RecurringTransactionService recurringTransactionService;
 
     private final RecurringTransactionMapper recurringTransactionMapper;
+
+    private final CustomSecurityExpression customSecurityExpression;
 
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
@@ -66,6 +70,9 @@ public class RecurringTransactionController {
             @PathVariable Long id,
             @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessRecurringTransaction(jwtEntity.getUserId(), id))
+            throw new AccessDeniedException("Access is denied");
+
         recurringTransactionService.makeInactive(id);
     }
 }

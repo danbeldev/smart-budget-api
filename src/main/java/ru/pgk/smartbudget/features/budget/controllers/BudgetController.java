@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import ru.pgk.smartbudget.features.budget.dto.params.CreateOrUpdateBudgetParams;
 import ru.pgk.smartbudget.features.budget.dto.params.GetBudgetsParams;
 import ru.pgk.smartbudget.features.budget.mappers.BudgetMapper;
 import ru.pgk.smartbudget.features.budget.services.BudgetService;
+import ru.pgk.smartbudget.security.expressions.CustomSecurityExpression;
 import ru.pgk.smartbudget.security.jwt.JwtEntity;
 
 import java.time.LocalDate;
@@ -30,6 +32,8 @@ public class BudgetController {
     private final BudgetService budgetService;
 
     private final BudgetMapper budgetMapper;
+
+    private final CustomSecurityExpression customSecurityExpression;
 
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
@@ -65,8 +69,12 @@ public class BudgetController {
     @GetMapping("{id}")
     @SecurityRequirement(name = "bearerAuth")
     private BudgetDto getById(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessBudget(jwtEntity.getUserId(), id))
+            throw new AccessDeniedException("Access is denied");
+
         return budgetMapper.toDto(budgetService.getById(id));
     }
 
@@ -83,16 +91,24 @@ public class BudgetController {
     @SecurityRequirement(name = "bearerAuth")
     private void update(
             @PathVariable Long id,
-            @Validated @RequestBody CreateOrUpdateBudgetParams params
+            @Validated @RequestBody CreateOrUpdateBudgetParams params,
+            @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessBudget(jwtEntity.getUserId(), id))
+            throw new AccessDeniedException("Access is denied");
+
         budgetService.update(id, params);
     }
 
     @DeleteMapping("{id}")
     @SecurityRequirement(name = "bearerAuth")
     private void deleteById(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessBudget(jwtEntity.getUserId(), id))
+            throw new AccessDeniedException("Access is denied");
+
         budgetService.deleteById(id);
     }
 }

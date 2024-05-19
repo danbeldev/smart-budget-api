@@ -7,12 +7,14 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import ru.pgk.smartbudget.common.dto.PageDto;
 import ru.pgk.smartbudget.features.expenseCategory.dto.ExpenseCategoryDto;
 import ru.pgk.smartbudget.features.expenseCategory.mappers.ExpenseCategoryMapper;
 import ru.pgk.smartbudget.features.expenseCategory.services.ExpenseCategoryService;
+import ru.pgk.smartbudget.security.expressions.CustomSecurityExpression;
 import ru.pgk.smartbudget.security.jwt.JwtEntity;
 
 @Valid
@@ -25,6 +27,8 @@ public class ExpenseCategoryController {
     private final ExpenseCategoryService expenseCategoryService;
 
     private final ExpenseCategoryMapper expenseCategoryMapper;
+
+    private final CustomSecurityExpression customSecurityExpression;
 
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
@@ -62,8 +66,12 @@ public class ExpenseCategoryController {
     @DeleteMapping("{id}")
     @SecurityRequirement(name = "bearerAuth")
     private void deleteById(
-            @PathVariable Integer id
+            @PathVariable Integer id,
+            @AuthenticationPrincipal JwtEntity jwtEntity
     ) {
+        if(!customSecurityExpression.canAccessExpenseCategory(jwtEntity.getUserId(), id))
+            throw new AccessDeniedException("Access is denied");
+
         expenseCategoryService.deleteById(id);
     }
 }
