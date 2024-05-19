@@ -35,31 +35,19 @@ pipeline {
 
         stage('Flyway Migrate') {
             steps {
-                script {
-                    docker.image('gradle:6.8.3-jdk17').inside {
-                        sh './gradlew flywayMigrate'
-                    }
-                }
+                sh './gradlew flywayMigrate'
             }
         }
 
         stage('Build') {
             steps {
-                script {
-                    docker.image('gradle:6.8.3-jdk17').inside {
-                        sh './gradlew clean build'
-                    }
-                }
+                sh './gradlew clean build'
             }
         }
 
         stage('Test') {
             steps {
-                script {
-                    docker.image('gradle:6.8.3-jdk17').inside {
-                        sh './gradlew test'
-                    }
-                }
+                sh './gradlew test'
             }
         }
 
@@ -72,11 +60,7 @@ pipeline {
 
         stage('Run Application') {
             steps {
-                script {
-                    docker.image('openjdk:17').inside {
-                        sh 'nohup java -jar build/libs/smart-budget-0.0.1-SNAPSHOT.jar &'
-                    }
-                }
+                sh 'nohup java -jar build/libs/smart-budget-0.0.1-SNAPSHOT.jar &'
             }
         }
     }
