@@ -57,7 +57,7 @@ pipeline {
         stage('Run Application') {
             steps {
                 script {
-                    sh 'java -jar build/libs/*.jar'
+                    sh 'java -jar build/libs/smart-budget-0.0.1-SNAPSHOT.jar'
                 }
             }
         }
