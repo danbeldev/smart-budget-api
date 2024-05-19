@@ -1,10 +1,9 @@
 pipeline {
     agent any
 
-    environment {
-        JAVA_HOME = '/usr/lib/jvm/java-11-openjdk'
-        GRADLE_HOME = '/usr/local/gradle'
-        PATH = "${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${env.PATH}"
+    tools {
+            jdk 'OpenJDK 11'
+            gradle 'Gradle 6.8.3'
     }
 
     stages {
