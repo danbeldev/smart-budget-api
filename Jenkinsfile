@@ -1,9 +1,9 @@
 pipeline {
-    agent any
-
-    tools {
-            jdk 'OpenJDK 11'
-            gradle 'Gradle 6.8.3'
+    agent {
+        docker {
+            image 'gradle:6.8.3-jdk17'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
     }
 
     stages {
@@ -27,6 +27,11 @@ pipeline {
             }
         }
 
+        stage('Flyway Migrate') {
+            steps {
+                sh './gradlew flywayMigrate'
+            }
+        }
 
         stage('Build') {
             steps {
