@@ -68,9 +68,6 @@ pipeline {
     }
 
     post {
-        always {
-            cleanWs()
-        }
         success {
             echo 'Build, tests, and application startup succeeded!'
         }
